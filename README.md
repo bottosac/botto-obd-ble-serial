@@ -1,37 +1,12 @@
 **Serial interface for ELMduino using BLE**
 
-ELMduino uses two ways of serial communication with ELM327 dongles - WiFi and Bluetooth classic. 
-Modern ESP32 devices do not support Bluetooth Classic, but they do support the BLE, so ESP32-C3, S3, C6 and other ESP32-based devices cannot be used with ELM327 OBD dongles which are compatible with iPhones (BLE 4.0 and up). 
+Fork of original project https://github.com/vdvornichenko/obd-ble-serial/tree/main (thank you vdvornichenko) 
+and updated project https://github.com/adlerre/obd-ble-serial (thank you adlerre)
 
-Here's the solution to have an OBD ELM327 dongle which is compatible with iPhone and that still could be used with your ESP32-based screen.
+I started from adlerre project because the original discover function of vdvornichenko was unable to find my ELM327 v.1.5 with BLE support.
 
-Current project just wraps the Serial communication with OBD dongle via BLE 4.0 protocol, the wrapper inherits and uses all the Serial methods so it could be used in ELMduino instead of BluetoothSerial or WiFi connection.
+I changed the prototype of begin function for a compile error of library BLEUUID.
 
-Usage
-Instead of  (for example) using of Bluetooth serial in ELMduino samples
+Now after a brief search the discover function recognize and connect my ELM327 (OBDBLE).
 
-    BluetoothSerial SerialBT;
-
-you can just pass the instance of  BLEClientSerial to myELM327 functions and it will work in the same way.
-
-    #include <BLEClientSerial.h>
-    BLEClientSerial BLESerial;
-    #define ELM_PORT   BLESerial
-    ELM327 myELM327;
-    ELM_PORT.begin("OBDLink CX");
-    ...
-      if (!ELM_PORT.connect())
-    ... 
-      if (!myELM327.begin(ELM_PORT, true, 2000))
-    ... 
-
-If your BLE adaptor does not work, you may check with nRF connect app, what are the characteristics for *Write* and *Notify* and change such UUIDs in BLEClientSerial.cpp,
-for OBDLink CX (and a lot of other OBD adaptors from China) there will be the following settings:
-
-    BLEUUID  serviceUUID_FFF0("FFF0");
-    BLEUUID  rxUUID("FFF1");//Notify characteristic
-    BLEUUID  txUUID("FFF2");//Write characteristic
-
-Some references regarding chars and services of OBD dongles:
-https://stackoverflow.com/questions/61090365/what-ble-characteristic-should-i-use-in-a-ble-ios-device-for-obdii
-https://stackoverflow.com/questions/52075456/which-gatt-profile-and-services-are-used-by-obd-ble-adapters-like-lelink-automa
+I updated the example function with new calls
