@@ -18,9 +18,12 @@ void setup()
 {
 
   DEBUG_PORT.begin(115200);
-  ELM_PORT.begin("OBDLink CX");
+  //ESP32-C3 is local BLE
+  //"FFF0", "FFF1", "FFF2" are target services
+  ELM_PORT.begin("ESP32-C3", "FFF0", "FFF1", "FFF2");
   
-  if (!ELM_PORT.connect())
+  //OBDBLE is target BLE
+  if (!ELM_PORT.connect("OBDBLE"))
   {
     DEBUG_PORT.println("Couldn't connect to OBD scanner - Phase 1");
     while(1);
